@@ -236,6 +236,10 @@ unsigned char GetByte ( unsigned long timeout )
 	
 	
 	tick_count = (unsigned long) timeout / MS_PER_TIMER_COMPARE_MATCH;
+	/* Always clear stale underflow state from previous GetByte() calls.
+	 * If this remains set, the loop below can keep stopping the timer before
+	 * tick_count reaches 0, resulting in an apparent infinite wait. */
+	DelayTimerUnderFlowFlag = 0;
 	/* Do NOT clear SRIF0 here — a byte that arrived since the last GetByte
 	 * call (e.g. during flash programming) must not be discarded. */
 	R_TAU0_Channel0_Start();
