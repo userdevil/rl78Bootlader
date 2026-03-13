@@ -304,13 +304,17 @@ unsigned char GetDelayTimerStatus (void)
 }
 unsigned char PurgeComms(unsigned long timeout)
 {
-	unsigned char err_flag;
-	
-	do {
-		err_flag = GetByte( timeout );
-		return(err_flag);
-	} while( (err_flag != TIMEOUT) && (err_flag != ERROR) );
-	
+	unsigned char rxstatus;
+
+	/* Drain any pending bytes from UART until no new byte is received within
+	 * the timeout window. Returning after the first GetByte() leaves stale
+	 * bytes in the FIFO, which can misalign the first XMODEM frame. */
+	do
+	{
+		rxstatus = GetByte(timeout);
+	} while (rxstatus == OK);
+
+	return rxstatus;
 }
 
 void SendLFCR(void)
