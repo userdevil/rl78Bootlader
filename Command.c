@@ -1,6 +1,7 @@
 
 #pragma NOP
 
+#include "r_cg_macrodriver.h"
 #include "command.h"
 #include "r_cg_userdefine.h"
 #include "fsl.h"
@@ -97,11 +98,15 @@ void RunCommandHandler (void)
 	if ( rx_status == TIMEOUT )
 	{
 		R_WDT_Restart();
-		
+
 		// timed out - call target app if reset vector is valid
 		ptr = (__far unsigned int *)( FIRST_USER_FLASH_ADDR );
 		if ( *ptr != 0xffff )
 		{
+			// Stop bootloader peripherals and disable interrupts for a clean handoff
+			R_TAU0_Channel0_Stop();
+			DI();
+			R_WDT_Restart();
 			// call user program and never return
 			fp = (pt2FunctionErase) ptr;
 			fp( 0, 0);
@@ -539,7 +544,10 @@ void Command_5 (void)
 	if ( *ptr != 0xffff )
 	{
 		SendString(c5_str5);// "Running user program..." );
-		//R_UART1_Stop_B();
+		// Stop bootloader peripherals and disable interrupts for a clean handoff
+		R_TAU0_Channel0_Stop();
+		DI();
+		R_WDT_Restart();
 		// call user program and never return
 		fp = (pt2FunctionErase) ptr;
 		fp( 0, 0);

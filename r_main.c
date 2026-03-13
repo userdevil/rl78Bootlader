@@ -126,12 +126,14 @@ void main(void)
 		SendLFCR();
 		R_WDT_Restart();
 		RunCommandHandler();
-   
+
+    /* If RunCommandHandler returns (no user app and no serial activity),
+     * keep looping so the bootloader can still accept programming commands.
+     * WDT is fed inside GetByte() which is called on each iteration. */
     while(1)
     {
-R_WDT_Restart();
-	    	SendByte(ReadByte());
-	    
+    	R_WDT_Restart();
+    	RunCommandHandler();
     }
 
     /* End user code. Do not edit comment generated here */
@@ -161,8 +163,8 @@ void MyErrorHandler(void)
 	NOP();
 }
 unsigned char ReadByte(void)
-{      
-	while(SRIF0 == 0);			//Wait until a byte is received
+{
+	while(SRIF0 == 0) { R_WDT_Restart(); }	//Wait until a byte is received, feeding WDT
 	SRIF0 = 0;
 	return (RXD0);
 }
@@ -285,6 +287,7 @@ unsigned char GetByte ( unsigned long timeout )
 	}
 	else
 	{
+		DelayTimerUnderFlowFlag = 0;
 		status = TIMEOUT;
 	}
 	

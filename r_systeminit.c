@@ -41,6 +41,7 @@ Includes
 #include "r_cg_timer.h"
 /* Start user code for include. Do not edit comment generated here */
 #include "bl_ram_vector.h"
+#include "r_cg_wdt.h"
 /* End user code. Do not edit comment generated here */
 #include "r_cg_userdefine.h"
 
@@ -48,6 +49,8 @@ Includes
 Global variables and functions
 ***********************************************************************************************************************/
 /* Start user code for global. Do not edit comment generated here */
+extern void r_tau0_channel0_interrupt(void);
+extern void r_wdt_interrupt(void);
 /* End user code. Do not edit comment generated here */
 
 /***********************************************************************************************************************
@@ -77,7 +80,8 @@ void R_Systeminit(void)
 void hdwinit(void)
 {
     DI();
-    	RAM_INTTM00_ISR = &r_tau0_channel0_interrupt;
+    RAM_INTTM00_ISR = &r_tau0_channel0_interrupt;
+    RAM_INTWDTI_ISR = &r_wdt_interrupt;   /* prevent NULL-ptr call when WDT fires */
     R_Systeminit();
 }
 
