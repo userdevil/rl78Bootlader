@@ -430,52 +430,14 @@ void Command_2 (void)
 void Command_4 (void)
 {
     // download data using xmodem and program into flash
-    unsigned char Status, Shift;
-	volatile unsigned long Address, ul;
-	unsigned char rxstatus;
-	
+    unsigned char Status;
+	unsigned long Address;
 
-	
-	
-	// suggest download address as the first user flash address as usually this will be the case
-	SendLFCR();
-	SendString(c4_str1);// "Download to address 0x" );
-	SendString(first_user_flash_address);// FIRST_USER_FL_ADDR_TXT );
-	SendString(c4_str2);// " (Y/N)?" );
-	rxstatus = GetByte( 10000 );
-	SendByte( rx_data );
-	SendLFCR();
-	if (rxstatus == TIMEOUT )
-	{
-		SendLFCR();
-		SendString(c4_str3);// "Timed out waiting for confirmation..." );
-		return;
-	}
-	else if (  ( rx_data == 'y' ) || ( rx_data == 'Y' ) )
-	{
-		Address = FIRST_USER_FLASH_ADDR;
-	}
-	SendString(c4_str4);// "Program Flash (Y/N)?" );
-	rxstatus = GetByte( 10000 );
-	SendByte( rx_data );
-	if ( rxstatus == TIMEOUT )
-	{
-		SendLFCR();
-		SendString(c4_str5);// "Timed out waiting for response" );
-		return;
-	}
-	else if ( rxstatus == ERROR )
-	{
-		SendLFCR();
-		SendString(c4_str6);// "Comms error" );
-		return;
-	}
-	else if ( !( ( rx_data == 'y' ) || ( rx_data == 'Y' ) ) )
-	{
-		SendLFCR();
-		SendString(c4_str7);// "Flash programming cancelled" );
-		return;
-	}	
+	// No Y/N confirmations — selecting option 3 from the menu is already
+	// confirmation. Prompting here causes a deadlock: TeraTerm's XMODEM Send
+	// dialog waits for NAK while the bootloader waits for keyboard Y/N input.
+	Address = FIRST_USER_FLASH_ADDR;
+
 	SendLFCR();
 	SendString(c4_str8);// "Start XModem download..." );
 	SendLFCR();
