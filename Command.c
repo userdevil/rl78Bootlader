@@ -91,9 +91,9 @@ void RunCommandHandler (void)
 	__far unsigned int *ptr;
 	pt2FunctionErase fp;		// function pointer used to call target program
 	unsigned char rx_status;
-	// check if bootloader should run by detecting activity for a 3 seconds on the
-	// UART channel
-	rx_status = GetByte (2);
+	// check if bootloader should run by detecting activity for ~2 seconds on the
+	// UART channel (200 ticks × ~10 ms/tick = ~2 s)
+	rx_status = GetByte (200);
 	
 	if ( rx_status == TIMEOUT )
 	{
