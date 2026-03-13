@@ -169,29 +169,17 @@ unsigned char ReadByte(void)
 	return (RXD0);
 }
 void SendByte ( unsigned char aChar )
-{ 
-//	SRIF1 = 0;
-	
-//	STMK0 = 1U;    /* enable INTST0 interrupt */
-//	xbit[0] = 0x41;
-//	
-//	//strcpy(xbit,aChar);
-////	sprintf(&xbit,"%c",aChar);
-//	TXD1	= 0x33;
-////	TXD1	= aChar;
-//	STMK0 = 0U;    /* enable INTST0 interrupt */
-//	while(STIF1 == 0);			//Wait until buffer becomes empty
-//	STIF1 = 0;
-//	//	while((SSR00 & 0x40) == 0x40);			//Wait until buffer becomes empty
-//	STIF1 = 0;	
-//	NOP();
+{
 	STMK0 = 1U;			/* disable INTST0 interrupt */
-	SRIF0 = 0;
+	/* Do NOT clear SRIF0 here — clearing the RX flag inside a TX function
+	 * discards any byte that arrived just before or during transmission,
+	 * which causes the first byte of the next incoming XMODEM packet to be
+	 * lost and produces continuous NAK retries (~3 Bytes/s). */
 	TXD0	= aChar;
 	while(STIF0 == 0);			//Wait until buffer becomes empty
-	STIF0 = 0;	
+	STIF0 = 0;
 	NOP();
-	
+
 	STMK0 = 0U;    /* enable INTST0 interrupt */
 }
 unsigned char RxByteWaiting(void)
@@ -258,11 +246,13 @@ unsigned char GetByte ( unsigned long timeout )
 		R_WDT_Restart();
 		if ( GetDelayTimerStatus() )
 		{
+			/* Timer underflow detected inside the loop body — this is a race:
+			 * tick_count hit 0 between the while-condition check and here.
+			 * Stop the timer and do NOT restart it; the while condition will
+			 * see tick_count==0 and exit on the next iteration.
+			 * (Old code restarted the timer with tick_count==0, causing the
+			 * next ISR to wrap tick_count to 0xFFFFFFFF → infinite spin.) */
 			R_TAU0_Channel0_Stop();
-			if ( tick_count == 0 )
-			{
-				R_TAU0_Channel0_Start();
-			}
 		}
 	}
 
@@ -276,12 +266,13 @@ unsigned char GetByte ( unsigned long timeout )
 		// check for errors
 		// Rx error
 		if((err_flag>=1)&&(err_flag<=7)){	//Error
-
+			/* Clear sticky UART error flags (OVF/FEF/PEF) so they do not
+			 * poison every subsequent GetByte call. */
+			SIR01 = (unsigned short)(err_flag & 0x07U);
 			status = ERROR;
 		}
 		else
 		{
-
 			// no Rx error
 			rx_data = RXD0;
 			status = OK;
@@ -290,6 +281,7 @@ unsigned char GetByte ( unsigned long timeout )
 	else
 	{
 		DelayTimerUnderFlowFlag = 0;
+		R_TAU0_Channel0_Stop();		/* stop timer — was left running after tick_count reached 0 */
 		status = TIMEOUT;
 	}
 	
