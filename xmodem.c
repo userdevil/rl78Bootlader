@@ -87,7 +87,9 @@ XM_PROG_FAIL		-	Falied to program one or more bytes of the Flash memory
 		//	initialise Rx attempts
 		RetryCounter = 10;
 	
-		//decrement Rx attempts counter & get Rx byte with a 10 sec timeout repeat until Rx attempts is 0
+		// decrement Rx attempts counter & get Rx byte; repeat until Rx attempts is 0
+		// Each attempt allows ~1 s (100 ticks × ~10 ms/tick); 10 retries = ~10 s total
+		// (XModem standard: receiver sends NAK every 10 s and waits up to 60 s)
 		rxstatus = TIMEOUT;
 		while ( (RetryCounter > 0) && (rxstatus == TIMEOUT) )
 		{
@@ -97,11 +99,11 @@ XM_PROG_FAIL		-	Falied to program one or more bytes of the Flash memory
 				//	if this is the start of the xmodem frame
 				//	send a NAK to the transmitter
 				SendByte( NAK );
-				rxstatus = GetByte( 10 );
-			}							  
+				rxstatus = GetByte( 100 );
+			}
 			else
 			{
-				rxstatus = GetByte( 10 );
+				rxstatus = GetByte( 100 );
 			}
 			RetryCounter--;
 		}
