@@ -1,0 +1,535 @@
+
+
+
+78K0R Linker V1.80                            Date:12 Mar 2026 Page:   1
+
+Command:   -yC:\Program Files (x86)\Renesas Electronics\CS+\CACX\Device\
+           RL78\Devicefile -_msgoff -dbootloader.dr -oDefaultBuild\bootl
+           oader.lmf -gi00000000000000000000h -go04h,7FE00h,0 -gb0FFFFE8
+           H -mi0 -s -pDefaultBuild\bootloader.map C:\Program Files (x86
+           )\Renesas Electronics\CS+\CACX\CA78K0R\V1.72\lib78k0r\s0rll.r
+           el DefaultBuild\r_main.rel DefaultBuild\r_systeminit.rel Defa
+           ultBuild\r_cg_cgc.rel DefaultBuild\r_cg_cgc_user.rel DefaultB
+           uild\r_cg_serial.rel DefaultBuild\r_cg_serial_user.rel Defaul
+           tBuild\r_cg_wdt.rel DefaultBuild\r_cg_wdt_user.rel DefaultBui
+           ld\r_cg_timer.rel DefaultBuild\r_cg_timer_user.rel DefaultBui
+           ld\Command.rel DefaultBuild\xmodem.rel DefaultBuild\bl_ram_ve
+           ctor.rel -bfsl.lib -bcl0ram.lib -bcl0rm.lib -bcl0rmf.lib -iC:
+           \Program Files (x86)\Renesas Electronics\CS+\CACX\CA78K0R\V1.
+           72\lib78k0r
+Para-file:
+Out-file:  DefaultBuild\bootloader.lmf
+Map-file:  DefaultBuild\bootloader.map
+Direc-file:bootloader.dr
+Directive: ;MEMORY
+           ;MEMORY ROM : ( 00000000H, 00080000H ) / REGULAR
+           ;MEMORY RAM : ( 000f7f00H, 00008000H ) / REGULAR
+           
+           MEMORY ROM   : ( 000000H , 002000H )    ; Boot clusters
+           MEMORY U_ROM : ( 002001H , 07DB00H )    ; User program
+           MEMORY OCDROM :(07FE00H, 000200H)
+           
+           
+           ; Placement for uer's program in ROM
+           ;MERGE U_ROMPRG : = U_ROM               ; User program withou
+           t control flash
+           
+           ;Placement for FSL in ROM
+           MERGE FSL_FCD  : = ROM
+           MERGE FSL_BCD  : = ROM
+           
+           ; User RAM area definition
+           ; It is able to use this memory area "RAM" as you like.
+           ; Please modify this area matching with your device.
+           ; Ex.) MEMORY RAM : ( 0FF300H , 00B20H )        ; for device 
+           RAM size 4KB
+           ; * Don't include memory for self programming RAM.
+           ; * Don't rename this memory area except "RAM".
+           MEMORY RAM : ( 0F8300H , 07220H )       ; for device RAM size
+            4KB
+           MEMORY RAM_SADDR : ( 0FFE20H , 00DFH )  ; RAM (saddr)
+           MEMORY SELFRAM : ( 0F7F00H , 000400H  ) ; //F7F00 - STARTING 
+           ADDRESS, 1KB FOR BOOTLOADER
+
+
+*** Link information ***
+
+    42 output segment(s)
+ 12FBH byte(s) real data
+  1230 symbol(s) defined
+
+
+*** Memory map ***
+
+
+  SPACE=REGULAR
+
+  MEMORY=ROM
+  BASE ADDRESS=00000H   SIZE=02000H
+         OUTPUT   INPUT    INPUT      BASE      SIZE
+         SEGMENT  SEGMENT  MODULE     ADDRESS
+         @@VECT00                     00000H    00002H  CSEG AT
+                  @@VECT00 @cstart    00000H    00002H
+         @@CNST                       00002H    00000H  CSEG UNITP
+                  @@CNST   @cstart    00002H    00000H
+                  @@CNST   r_main     00002H    00000H
+                  @@CNST   r_systeminit
+                                      00002H    00000H
+                  @@CNST   r_cg_cgc   00002H    00000H
+                  @@CNST   r_cg_cgc_user
+                                      00002H    00000H
+                  @@CNST   r_cg_serial
+                                      00002H    00000H
+                  @@CNST   r_cg_serial_user
+                                      00002H    00000H
+                  @@CNST   r_cg_wdt   00002H    00000H
+                  @@CNST   r_cg_wdt_user
+                                      00002H    00000H
+                  @@CNST   r_cg_timer
+                                      00002H    00000H
+                  @@CNST   r_cg_timer_user
+                                      00002H    00000H
+                  @@CNST   Command    00002H    00000H
+                  @@CNST   xmodem     00002H    00000H
+                  @@CNST   bl_ram_vector
+                                      00002H    00000H
+         @@CNSTL                      00002H    00000H  CSEG PAGE64KP
+                  @@CNSTL  @cstart    00002H    00000H
+         @@CNSTL                      00002H    00000H  CSEG PAGE64KP
+                  @@CNSTL  r_main     00002H    00000H
+         @@CNSTL                      00002H    00000H  CSEG PAGE64KP
+                  @@CNSTL  r_systeminit
+                                      00002H    00000H
+         @@CNSTL                      00002H    00000H  CSEG PAGE64KP
+                  @@CNSTL  r_cg_cgc   00002H    00000H
+         @@CNSTL                      00002H    00000H  CSEG PAGE64KP
+                  @@CNSTL  r_cg_cgc_user
+                                      00002H    00000H
+         @@CNSTL                      00002H    00000H  CSEG PAGE64KP
+                  @@CNSTL  r_cg_serial
+                                      00002H    00000H
+         @@CNSTL                      00002H    00000H  CSEG PAGE64KP
+                  @@CNSTL  r_cg_serial_user
+                                      00002H    00000H
+         @@CNSTL                      00002H    00000H  CSEG PAGE64KP
+                  @@CNSTL  r_cg_wdt   00002H    00000H
+         @@CNSTL                      00002H    00000H  CSEG PAGE64KP
+                  @@CNSTL  r_cg_wdt_user
+                                      00002H    00000H
+         @@CNSTL                      00002H    00000H  CSEG PAGE64KP
+                  @@CNSTL  r_cg_timer
+                                      00002H    00000H
+         @@CNSTL                      00002H    00000H  CSEG PAGE64KP
+                  @@CNSTL  r_cg_timer_user
+                                      00002H    00000H
+         @@CNSTL                      00002H    00000H  CSEG PAGE64KP
+                  @@CNSTL  Command    00002H    00000H
+         @@CNSTL                      00002H    00000H  CSEG PAGE64KP
+                  @@CNSTL  xmodem     00002H    00000H
+         @@CNSTL                      00002H    00000H  CSEG PAGE64KP
+                  @@CNSTL  bl_ram_vector
+                                      00002H    00000H
+         @@RLINIT                     00002H    00000H  CSEG UNIT64KP
+                  @@RLINIT @cstart    00002H    00000H
+                  @@RLINIT r_main     00002H    00000H
+                  @@RLINIT r_systeminit
+                                      00002H    00000H
+                  @@RLINIT r_cg_cgc   00002H    00000H
+                  @@RLINIT r_cg_cgc_user
+                                      00002H    00000H
+                  @@RLINIT r_cg_serial
+                                      00002H    00000H
+                  @@RLINIT r_cg_serial_user
+                                      00002H    00000H
+                  @@RLINIT r_cg_wdt   00002H    00000H
+                  @@RLINIT r_cg_wdt_user
+                                      00002H    00000H
+                  @@RLINIT r_cg_timer
+                                      00002H    00000H
+                  @@RLINIT r_cg_timer_user
+                                      00002H    00000H
+                  @@RLINIT Command    00002H    00000H
+                  @@RLINIT xmodem     00002H    00000H
+                  @@RLINIT bl_ram_vector
+                                      00002H    00000H
+                  @@RLINIT @rom       00002H    00000H
+         @@R_INIS                     00002H    00000H  CSEG UNIT64KP
+                  @@R_INIS @cstart    00002H    00000H
+                  @@R_INIS r_main     00002H    00000H
+                  @@R_INIS r_systeminit
+                                      00002H    00000H
+                  @@R_INIS r_cg_cgc   00002H    00000H
+                  @@R_INIS r_cg_cgc_user
+                                      00002H    00000H
+                  @@R_INIS r_cg_serial
+                                      00002H    00000H
+                  @@R_INIS r_cg_serial_user
+                                      00002H    00000H
+                  @@R_INIS r_cg_wdt   00002H    00000H
+                  @@R_INIS r_cg_wdt_user
+                                      00002H    00000H
+                  @@R_INIS r_cg_timer
+                                      00002H    00000H
+                  @@R_INIS r_cg_timer_user
+                                      00002H    00000H
+                  @@R_INIS Command    00002H    00000H
+                  @@R_INIS xmodem     00002H    00000H
+                  @@R_INIS bl_ram_vector
+                                      00002H    00000H
+                  @@R_INIS @rom       00002H    00000H
+         @@CALT                       00002H    00000H  CSEG
+                  @@CALT   @cstart    00002H    00000H
+                  @@CALT   r_main     00002H    00000H
+                  @@CALT   r_systeminit
+                                      00002H    00000H
+                  @@CALT   r_cg_cgc   00002H    00000H
+                  @@CALT   r_cg_cgc_user
+                                      00002H    00000H
+                  @@CALT   r_cg_serial
+                                      00002H    00000H
+                  @@CALT   r_cg_serial_user
+                                      00002H    00000H
+                  @@CALT   r_cg_wdt   00002H    00000H
+                  @@CALT   r_cg_wdt_user
+                                      00002H    00000H
+                  @@CALT   r_cg_timer
+                                      00002H    00000H
+                  @@CALT   r_cg_timer_user
+                                      00002H    00000H
+                  @@CALT   Command    00002H    00000H
+                  @@CALT   xmodem     00002H    00000H
+                  @@CALT   bl_ram_vector
+                                      00002H    00000H
+         ??NMIROM                     00002H    00002H  CSEG
+         FSL_FCD                      00004H    00097H  CSEG UNIT64KP
+                  FSL_FCD  fsl_f_init
+                                      00004H    00062H
+                  FSL_FCD  fsl_f_open
+                                      00066H    00005H
+                  FSL_FCD  fsl_f_close
+                                      0006CH    00005H
+                  FSL_FCD  fsl_f_pfunc
+                                      00072H    00029H
+* gap *                               0009BH    00025H
+         ?CSEGOB0                     000C0H    00004H  CSEG OPT_BYTE
+         @@CODE                       000C4H    00000H  CSEG BASE
+                  @@CODE   r_main     000C4H    00000H
+                  @@CODE   r_systeminit
+                                      000C4H    00000H
+                  @@CODE   r_cg_cgc   000C4H    00000H
+                  @@CODE   r_cg_cgc_user
+                                      000C4H    00000H
+                  @@CODE   r_cg_serial
+                                      000C4H    00000H
+                  @@CODE   r_cg_serial_user
+                                      000C4H    00000H
+                  @@CODE   r_cg_wdt   000C4H    00000H
+                  @@CODE   r_cg_wdt_user
+                                      000C4H    00000H
+                  @@CODE   r_cg_timer
+                                      000C4H    00000H
+                  @@CODE   r_cg_timer_user
+                                      000C4H    00000H
+                  @@CODE   Command    000C4H    00000H
+                  @@CODE   xmodem     000C4H    00000H
+                  @@CODE   bl_ram_vector
+                                      000C4H    00000H
+         @@BASE                       000C4H    00000H  CSEG BASE
+                  @@BASE   r_main     000C4H    00000H
+                  @@BASE   r_systeminit
+                                      000C4H    00000H
+                  @@BASE   r_cg_cgc   000C4H    00000H
+                  @@BASE   r_cg_cgc_user
+                                      000C4H    00000H
+                  @@BASE   r_cg_serial
+                                      000C4H    00000H
+                  @@BASE   r_cg_serial_user
+                                      000C4H    00000H
+                  @@BASE   r_cg_wdt   000C4H    00000H
+                  @@BASE   r_cg_wdt_user
+                                      000C4H    00000H
+                  @@BASE   r_cg_timer
+                                      000C4H    00000H
+                  @@BASE   r_cg_timer_user
+                                      000C4H    00000H
+                  @@BASE   Command    000C4H    00000H
+                  @@BASE   xmodem     000C4H    00000H
+                  @@BASE   bl_ram_vector
+                                      000C4H    00000H
+         ?CSEGSI                      000C4H    0000AH  CSEG
+         ?OCDSTAD                     000CEH    0000AH  CSEG
+         @@LCODE                      000D8H    00117H  CSEG BASE
+                  @@LCODE  @cstart    000D8H    000ADH
+                  @@LCODE  @cudiv     00185H    00034H
+                  @@LCODE  @curem     001B9H    00036H
+* gap *                               001EFH    00001H
+         FSL_BCD                      001F0H    00100H  CSEG UNIT64KP
+                  FSL_BCD  fsl_b_common
+                                      001F0H    00100H
+         @@R_INIT                     002F0H    004E0H  CSEG UNIT64KP
+                  @@R_INIT @cstart    002F0H    00000H
+                  @@R_INIT r_main     002F0H    00046H
+                  @@R_INIT r_systeminit
+                                      00336H    00000H
+                  @@R_INIT r_cg_cgc   00336H    00000H
+                  @@R_INIT r_cg_cgc_user
+                                      00336H    00000H
+                  @@R_INIT r_cg_serial
+                                      00336H    00000H
+                  @@R_INIT r_cg_serial_user
+                                      00336H    00000H
+                  @@R_INIT r_cg_wdt   00336H    00000H
+                  @@R_INIT r_cg_wdt_user
+                                      00336H    00000H
+                  @@R_INIT r_cg_timer
+                                      00336H    00000H
+                  @@R_INIT r_cg_timer_user
+                                      00336H    00000H
+                  @@R_INIT Command    00336H    0049AH
+                  @@R_INIT xmodem     007D0H    00000H
+                  @@R_INIT bl_ram_vector
+                                      007D0H    00000H
+                  @@R_INIT @rom       007D0H    00000H
+         @@CODEL                      007D0H    00AA3H  CSEG
+                  @@CODEL  r_main     007D0H    001B4H
+                  @@CODEL  r_systeminit
+                                      00984H    00029H
+                  @@CODEL  r_cg_cgc   009ADH    00017H
+                  @@CODEL  r_cg_cgc_user
+                                      009C4H    00005H
+                  @@CODEL  r_cg_serial
+                                      009C9H    00138H
+                  @@CODEL  r_cg_serial_user
+                                      00B01H    00000H
+                  @@CODEL  r_cg_wdt   00B01H    00014H
+                  @@CODEL  r_cg_wdt_user
+                                      00B15H    00001H
+                  @@CODEL  r_cg_timer
+                                      00B16H    00091H
+                  @@CODEL  r_cg_timer_user
+                                      00BA7H    0001BH
+                  @@CODEL  Command    00BC2H    004CBH
+                  @@CODEL  xmodem     0108DH    001E6H
+                  @@CODEL  bl_ram_vector
+                                      01273H    00000H
+* gap *                               01273H    00001H
+         FSL_RCD                      01274H    00050H  CSEG UNIT64KP
+                  FSL_RCD  fsl_r_std_cmd
+                                      01274H    0001AH
+                  FSL_RCD  fsl_r_status_check
+                                      0128EH    0000EH
+                  FSL_RCD  fsl_r_check_flow
+                                      0129CH    00028H
+         @@LCODEL                     012C4H    00060H  CSEG
+                  @@LCODEL @stkinit   012C4H    00044H
+                  @@LCODEL exit       01308H    0001CH
+* gap *                               01324H    00CDCH
+
+  MEMORY=U_ROM
+  BASE ADDRESS=02001H   SIZE=7DB00H
+         OUTPUT   INPUT    INPUT      BASE      SIZE
+         SEGMENT  SEGMENT  MODULE     ADDRESS
+* gap *                               02001H    7DB00H
+
+  MEMORY=OCDROM
+  BASE ADDRESS=7FE00H   SIZE=00200H
+         OUTPUT   INPUT    INPUT      BASE      SIZE
+         SEGMENT  SEGMENT  MODULE     ADDRESS
+* gap *                               7FE00H    00200H
+
+  MEMORY=SELFRAM
+  BASE ADDRESS=F7F00H   SIZE=00400H
+         OUTPUT   INPUT    INPUT      BASE      SIZE
+         SEGMENT  SEGMENT  MODULE     ADDRESS
+* gap *                               F7F00H    00400H
+
+  MEMORY=RAM
+  BASE ADDRESS=F8300H   SIZE=07220H
+         OUTPUT   INPUT    INPUT      BASE      SIZE
+         SEGMENT  SEGMENT  MODULE     ADDRESS
+         @@DATA                       F8300H    0015CH  DSEG BASEP
+                  @@DATA   @cstart    F8300H    000BAH
+                  @@DATA   r_main     F83BAH    00012H
+                  @@DATA   r_systeminit
+                                      F83CCH    00000H
+                  @@DATA   r_cg_cgc   F83CCH    00000H
+                  @@DATA   r_cg_cgc_user
+                                      F83CCH    00000H
+                  @@DATA   r_cg_serial
+                                      F83CCH    0000AH
+                  @@DATA   r_cg_serial_user
+                                      F83D6H    00000H
+                  @@DATA   r_cg_wdt   F83D6H    00000H
+                  @@DATA   r_cg_wdt_user
+                                      F83D6H    00000H
+                  @@DATA   r_cg_timer
+                                      F83D6H    00000H
+                  @@DATA   r_cg_timer_user
+                                      F83D6H    00000H
+                  @@DATA   Command    F83D6H    00000H
+                  @@DATA   xmodem     F83D6H    00086H
+                  @@DATA   @rom       F845CH    00000H
+         @@INIT                       F845CH    004E0H  DSEG BASEP
+                  @@INIT   @cstart    F845CH    00000H
+                  @@INIT   r_main     F845CH    00046H
+                  @@INIT   r_systeminit
+                                      F84A2H    00000H
+                  @@INIT   r_cg_cgc   F84A2H    00000H
+                  @@INIT   r_cg_cgc_user
+                                      F84A2H    00000H
+                  @@INIT   r_cg_serial
+                                      F84A2H    00000H
+                  @@INIT   r_cg_serial_user
+                                      F84A2H    00000H
+                  @@INIT   r_cg_wdt   F84A2H    00000H
+                  @@INIT   r_cg_wdt_user
+                                      F84A2H    00000H
+                  @@INIT   r_cg_timer
+                                      F84A2H    00000H
+                  @@INIT   r_cg_timer_user
+                                      F84A2H    00000H
+                  @@INIT   Command    F84A2H    0049AH
+                  @@INIT   xmodem     F893CH    00000H
+                  @@INIT   bl_ram_vector
+                                      F893CH    00000H
+                  @@INIT   @rom       F893CH    00000H
+         @@INIS                       F893CH    00000H  DSEG UNITP
+                  @@INIS   @cstart    F893CH    00000H
+                  @@INIS   r_main     F893CH    00000H
+                  @@INIS   r_systeminit
+                                      F893CH    00000H
+                  @@INIS   r_cg_cgc   F893CH    00000H
+                  @@INIS   r_cg_cgc_user
+                                      F893CH    00000H
+                  @@INIS   r_cg_serial
+                                      F893CH    00000H
+                  @@INIS   r_cg_serial_user
+                                      F893CH    00000H
+                  @@INIS   r_cg_wdt   F893CH    00000H
+                  @@INIS   r_cg_wdt_user
+                                      F893CH    00000H
+                  @@INIS   r_cg_timer
+                                      F893CH    00000H
+                  @@INIS   r_cg_timer_user
+                                      F893CH    00000H
+                  @@INIS   Command    F893CH    00000H
+                  @@INIS   xmodem     F893CH    00000H
+                  @@INIS   bl_ram_vector
+                                      F893CH    00000H
+                  @@INIS   @rom       F893CH    00000H
+         @@DATS                       F893CH    00000H  DSEG UNITP
+                  @@DATS   @cstart    F893CH    00000H
+                  @@DATS   r_main     F893CH    00000H
+                  @@DATS   r_systeminit
+                                      F893CH    00000H
+                  @@DATS   r_cg_cgc   F893CH    00000H
+                  @@DATS   r_cg_cgc_user
+                                      F893CH    00000H
+                  @@DATS   r_cg_serial
+                                      F893CH    00000H
+                  @@DATS   r_cg_serial_user
+                                      F893CH    00000H
+                  @@DATS   r_cg_wdt   F893CH    00000H
+                  @@DATS   r_cg_wdt_user
+                                      F893CH    00000H
+                  @@DATS   r_cg_timer
+                                      F893CH    00000H
+                  @@DATS   r_cg_timer_user
+                                      F893CH    00000H
+                  @@DATS   Command    F893CH    00000H
+                  @@DATS   xmodem     F893CH    00000H
+                  @@DATS   bl_ram_vector
+                                      F893CH    00000H
+                  @@DATS   @rom       F893CH    00000H
+         @@INITL                      F893CH    00000H  DSEG UNIT64KP
+                  @@INITL  @cstart    F893CH    00000H
+                  @@INITL  r_main     F893CH    00000H
+                  @@INITL  r_systeminit
+                                      F893CH    00000H
+                  @@INITL  r_cg_cgc   F893CH    00000H
+                  @@INITL  r_cg_cgc_user
+                                      F893CH    00000H
+                  @@INITL  r_cg_serial
+                                      F893CH    00000H
+                  @@INITL  r_cg_serial_user
+                                      F893CH    00000H
+                  @@INITL  r_cg_wdt   F893CH    00000H
+                  @@INITL  r_cg_wdt_user
+                                      F893CH    00000H
+                  @@INITL  r_cg_timer
+                                      F893CH    00000H
+                  @@INITL  r_cg_timer_user
+                                      F893CH    00000H
+                  @@INITL  Command    F893CH    00000H
+                  @@INITL  xmodem     F893CH    00000H
+                  @@INITL  bl_ram_vector
+                                      F893CH    00000H
+                  @@INITL  @rom       F893CH    00000H
+         @@DATAL                      F893CH    00000H  DSEG UNIT64KP
+                  @@DATAL  @cstart    F893CH    00000H
+                  @@DATAL  r_main     F893CH    00000H
+                  @@DATAL  r_systeminit
+                                      F893CH    00000H
+                  @@DATAL  r_cg_cgc   F893CH    00000H
+                  @@DATAL  r_cg_cgc_user
+                                      F893CH    00000H
+                  @@DATAL  r_cg_serial
+                                      F893CH    00000H
+                  @@DATAL  r_cg_serial_user
+                                      F893CH    00000H
+                  @@DATAL  r_cg_wdt   F893CH    00000H
+                  @@DATAL  r_cg_wdt_user
+                                      F893CH    00000H
+                  @@DATAL  r_cg_timer
+                                      F893CH    00000H
+                  @@DATAL  r_cg_timer_user
+                                      F893CH    00000H
+                  @@DATAL  Command    F893CH    00000H
+                  @@DATAL  xmodem     F893CH    00000H
+                  @@DATAL  bl_ram_vector
+                                      F893CH    00000H
+                  @@DATAL  @rom       F893CH    00000H
+* gap *                               F893CH    006C4H
+         RAM_VECT                     F9000H    00094H  DSEG AT
+                  RAM_VECT bl_ram_vector
+                                      F9000H    00094H
+* gap *                               F9094H    0648CH
+
+  MEMORY=RAM_SADDR
+  BASE ADDRESS=FFE20H   SIZE=000DFH
+         OUTPUT   INPUT    INPUT      BASE      SIZE
+         SEGMENT  SEGMENT  MODULE     ADDRESS
+         @@BITS                       FFE20H    00001H  BSEG
+                  @@BITS   @cstart    FFE20H.0  00000H.0
+                  @@BITS   r_main     FFE20H.0  00000H.2
+                  @@BITS   r_systeminit
+                                      FFE20H.2  00000H.0
+                  @@BITS   r_cg_cgc   FFE20H.2  00000H.0
+                  @@BITS   r_cg_cgc_user
+                                      FFE20H.2  00000H.0
+                  @@BITS   r_cg_serial
+                                      FFE20H.2  00000H.0
+                  @@BITS   r_cg_serial_user
+                                      FFE20H.2  00000H.0
+                  @@BITS   r_cg_wdt   FFE20H.2  00000H.0
+                  @@BITS   r_cg_wdt_user
+                                      FFE20H.2  00000H.0
+                  @@BITS   r_cg_timer
+                                      FFE20H.2  00000H.0
+                  @@BITS   r_cg_timer_user
+                                      FFE20H.2  00000H.1
+                  @@BITS   Command    FFE20H.3  00000H.0
+                  @@BITS   xmodem     FFE20H.3  00000H.0
+                  @@BITS   bl_ram_vector
+                                      FFE20H.3  00000H.0
+* gap *                               FFE21H    000B3H
+         @@SEGREG                     FFED4H    00004H  DSEG AT
+                  @@SEGREG @SEGREG    FFED4H    00004H
+         @@RTARG0                     FFED8H    00008H  DSEG AT
+                  @@RTARG0 @RTARG0    FFED8H    00008H
+* gap *                               FFEE0H    0001FH
+
+
+ Target chip : R5F100PL
+ Device file : V1.14
+

@@ -1,0 +1,25 @@
+;MEMORY
+;MEMORY ROM : ( 00000000H, 00080000H ) / REGULAR
+;MEMORY RAM : ( 000f7f00H, 00008000H ) / REGULAR
+
+MEMORY ROM   : ( 000000H , 002000H )	; Boot clusters
+MEMORY U_ROM : ( 002001H , 07DB00H )	; User program
+MEMORY OCDROM :(07FE00H, 000200H)
+
+
+; Placement for uer's program in ROM
+;MERGE U_ROMPRG : = U_ROM		; User program without control flash
+
+;Placement for FSL in ROM
+MERGE FSL_FCD  : = ROM
+MERGE FSL_BCD  : = ROM
+
+; User RAM area definition
+; It is able to use this memory area "RAM" as you like.
+; Please modify this area matching with your device.
+; Ex.) MEMORY RAM : ( 0FF300H , 00B20H )	; for device RAM size 4KB
+; * Don't include memory for self programming RAM.
+; * Don't rename this memory area except "RAM".
+MEMORY RAM : ( 0F8300H , 07220H )	; for device RAM size 4KB
+MEMORY RAM_SADDR : ( 0FFE20H , 00DFH )	; RAM (saddr)
+MEMORY SELFRAM : ( 0F7F00H , 000400H  ) ; //F7F00 - STARTING ADDRESS, 1KB FOR BOOTLOADER
