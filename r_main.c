@@ -65,10 +65,10 @@ unsigned char rec_val;
 unsigned char intro_str[]="RL78/G13 UART (9.6 Kbps) BOOT LOADER Programming...";
 unsigned char tmpr;
 unsigned char rx_data;	
-unsigned long tick_count;
+volatile unsigned long tick_count;
 unsigned char err_flag;
 unsigned char status;
-extern __boolean DelayTimerUnderFlowFlag;
+extern volatile __boolean DelayTimerUnderFlowFlag;
   
 unsigned char Data_Clear[9] = {27, 91, 50, 74, 0, 27, 91, 72, 0}; 
 unsigned char my_data[8] = "BL F S L";
