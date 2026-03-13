@@ -75,8 +75,10 @@ XM_PROG_FAIL		-	Failed to program one or more bytes of the Flash memory
 	FSL_Open();
 	FSL_PrepareFunctions();
 
-	// Flush any stale bytes already in the UART Rx buffer
-	rxstatus = PurgeComms(1);
+	// Flush any stale bytes already in the UART Rx buffer.
+	// GetByte() timeout is expressed in ms and quantized by the timer tick,
+	// so use a meaningful value (100 ms) instead of 1 ms.
+	rxstatus = PurgeComms(100);
 
 	while(1)
 	{
@@ -85,7 +87,7 @@ XM_PROG_FAIL		-	Failed to program one or more bytes of the Flash memory
 		RetryCounter = 10;
 
 		// decrement Rx attempts counter & get Rx byte; repeat until Rx attempts is 0
-		// Each attempt allows ~1 s (100 ticks x ~10 ms/tick); 10 retries = ~10 s total
+		// Each attempt allows ~1 s; 10 retries = ~10 s total
 		// (XModem standard: receiver sends NAK every 10 s and waits up to 60 s)
 		rxstatus = TIMEOUT;
 		while ( (RetryCounter > 0) && (rxstatus == TIMEOUT) )
@@ -96,11 +98,11 @@ XM_PROG_FAIL		-	Failed to program one or more bytes of the Flash memory
 				//	if this is the start of the xmodem frame
 				//	send a NAK to the transmitter
 				SendByte( NAK );
-				rxstatus = GetByte( 100 );
+				rxstatus = GetByte( 1000 );
 			}
 			else
 			{
-				rxstatus = GetByte( 100 );
+				rxstatus = GetByte( 1000 );
 			}
 			RetryCounter--;
 		}
@@ -147,7 +149,7 @@ XM_PROG_FAIL		-	Failed to program one or more bytes of the Flash memory
 				{
 					R_WDT_Restart();
 					//	get Rx byte with 1 second timeout
-					rxstatus = GetByte( 100 );
+					rxstatus = GetByte( 1000 );
 
 					//	if timed out or comms error
 					if ( (rxstatus == TIMEOUT) || (rxstatus == ERROR) )
@@ -201,6 +203,11 @@ XM_PROG_FAIL		-	Failed to program one or more bytes of the Flash memory
 							my_fsl_write_str.fsl_word_count_u08 = 0x20; /* 32 words = 128 bytes */
 							my_fsl_write_str.fsl_destination_address_u32 = Address;
 							my_fsl_status = FSL_Write((__near fsl_write_t*)&my_fsl_write_str);
+							while (my_fsl_status == FSL_BUSY)
+							{
+								R_WDT_Restart();
+								my_fsl_status = FSL_StatusCheck();
+							}
 
 							if(my_fsl_status == FSL_OK)
 							{
