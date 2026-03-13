@@ -248,9 +248,10 @@ unsigned char GetByte ( unsigned long timeout )
 	
 	
 	tick_count = (unsigned long) timeout / MS_PER_TIMER_COMPARE_MATCH;
-	SRIF0 = 0;
+	/* Do NOT clear SRIF0 here — a byte that arrived since the last GetByte
+	 * call (e.g. during flash programming) must not be discarded. */
 	R_TAU0_Channel0_Start();
-	
+
 	// wait for a byte to arrive
 	while ( ( RxByteWaiting() == 0 ) && (tick_count) )
 	{
@@ -264,26 +265,27 @@ unsigned char GetByte ( unsigned long timeout )
 			}
 		}
 	}
-	
+
 	if ( RxByteWaiting() == 1 )
 	{
+		SRIF0 = 0;			/* clear flag now that we are about to read */
 		DelayTimerUnderFlowFlag = 0;
 		R_TAU0_Channel0_Stop();
 	// read error flags and data
-		err_flag = SSR01L;	
+		err_flag = SSR01L;
 		// check for errors
-		// Rx error		
+		// Rx error
 		if((err_flag>=1)&&(err_flag<=7)){	//Error
-			
+
 			status = ERROR;
 		}
 		else
 		{
-			 
+
 			// no Rx error
 			rx_data = RXD0;
 			status = OK;
-		}		
+		}
 	}
 	else
 	{
