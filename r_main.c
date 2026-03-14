@@ -65,10 +65,10 @@ unsigned char rec_val;
 unsigned char intro_str[]="RL78/G13 UART (9.6 Kbps) BOOT LOADER Programming...";
 unsigned char tmpr;
 unsigned char rx_data;	
-unsigned long tick_count;
+volatile unsigned long tick_count;
 unsigned char err_flag;
 unsigned char status;
-extern __boolean DelayTimerUnderFlowFlag;
+extern volatile __boolean DelayTimerUnderFlowFlag;
   
 unsigned char Data_Clear[9] = {27, 91, 50, 74, 0, 27, 91, 72, 0}; 
 unsigned char my_data[8] = "BL F S L";
@@ -115,7 +115,7 @@ void main(void)
 		SendString(intro_str);
 		
 		fsl_descr.fsl_flash_voltage_u08 = 0x00;
-		fsl_descr.fsl_frequency_u08 = 0x14;
+		fsl_descr.fsl_frequency_u08 = 0x20;  /* 32 MHz internal HF oscillator */
 		fsl_descr.fsl_auto_status_check_u08 = 0x01;
 	
 		bl_fsl_status = FSL_Init((__far fsl_descriptor_t*)&fsl_descr);

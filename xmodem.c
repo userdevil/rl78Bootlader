@@ -200,7 +200,13 @@ XM_PROG_FAIL		-	Failed to program one or more bytes of the Flash memory
 							my_fsl_write_str.fsl_data_buffer_p_u08 = (fsl_u08 *)&RxByteBuffer.uc[3 + 1];
 							my_fsl_write_str.fsl_word_count_u08 = 0x20; /* 32 words = 128 bytes */
 							my_fsl_write_str.fsl_destination_address_u32 = Address;
+							R_WDT_Restart();
 							my_fsl_status = FSL_Write((__near fsl_write_t*)&my_fsl_write_str);
+							while(my_fsl_status == FSL_BUSY)
+							{
+								R_WDT_Restart();
+								my_fsl_status = FSL_StatusCheck();
+							}
 
 							if(my_fsl_status == FSL_OK)
 							{
@@ -222,8 +228,9 @@ XM_PROG_FAIL		-	Failed to program one or more bytes of the Flash memory
 							}
 							else
 							{
-								// prog fail — abort transfer
+								// prog fail — abort transfer (XMODEM requires two consecutive CAN bytes)
 								SendByte( NAK );
+								SendByte( CAN );
 								SendByte( CAN );
 								FSL_Close();
 								return( XM_PROG_FAIL );

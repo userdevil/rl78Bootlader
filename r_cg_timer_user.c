@@ -46,8 +46,8 @@ Includes
 Global variables and functions
 ***********************************************************************************************************************/
 /* Start user code for global. Do not edit comment generated here */
-extern unsigned long tick_count;
-__boolean DelayTimerUnderFlowFlag;
+extern volatile unsigned long tick_count;
+volatile __boolean DelayTimerUnderFlowFlag;
 /* End user code. Do not edit comment generated here */
 
 /***********************************************************************************************************************
