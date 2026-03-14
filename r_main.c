@@ -115,7 +115,7 @@ void main(void)
 		SendString(intro_str);
 		
 		fsl_descr.fsl_flash_voltage_u08 = 0x00;
-		fsl_descr.fsl_frequency_u08 = 0x14;
+		fsl_descr.fsl_frequency_u08 = 0x20;  /* 32 MHz internal HF oscillator */
 		fsl_descr.fsl_auto_status_check_u08 = 0x01;
 	
 		bl_fsl_status = FSL_Init((__far fsl_descriptor_t*)&fsl_descr);

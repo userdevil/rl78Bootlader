@@ -16,7 +16,7 @@ extern unsigned char rx_data;
 extern unsigned char GetByte ( unsigned long timeout );
 extern unsigned char GetDelayTimerStatus (void);
 extern void SendString (unsigned  char *str );
-extern __boolean DelayTimerUnderFlowFlag;
+extern volatile __boolean DelayTimerUnderFlowFlag;
 void Blank_Check_Error(unsigned char );
 void RunCommandHandler (void);
 extern unsigned char XmodemDownloadAndProgramFlash (unsigned long FlashAddress);
@@ -458,7 +458,8 @@ void Command_4 (void)
 	else SendString(c4_str14);//"NOT WORKING");
 
 	SendLFCR();
-	FSL_Close();
+	/* FSL_Close is already called inside XmodemDownloadAndProgramFlash on all
+	 * exit paths — do NOT call it again here. */
 }
 
 /**************************************/
