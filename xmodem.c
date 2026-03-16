@@ -13,6 +13,9 @@ extern unsigned char rx_data;
 extern unsigned char PurgeComms ( unsigned long timeout );
 extern unsigned char GetByte ( unsigned long timeout );
 extern unsigned char GetDelayTimerStatus (void);
+/* Last FSL status code from FSL_Write — read by Command_4 after failure */
+fsl_u08 g_xm_last_fsl_status = 0xFF;
+
 /***********************************************/
 /*    XmodemDownloadAndProgramFlash function   */
 /***********************************************/
@@ -216,6 +219,7 @@ XM_PROG_FAIL		-	Failed to program one or more bytes of the Flash memory
 							}
 							else
 							{
+								g_xm_last_fsl_status = my_fsl_status;  /* save for diagnostic */
 								MyErrorHandler();
 								Status = PROG_FAIL;
 							}
