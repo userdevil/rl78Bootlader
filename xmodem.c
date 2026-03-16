@@ -234,8 +234,10 @@ XM_PROG_FAIL		-	Failed to program one or more bytes of the Flash memory
 							}
 							else
 							{
-								// prog fail — abort transfer (XMODEM requires two consecutive CAN bytes)
-								SendByte( NAK );
+								// prog fail — abort transfer per XMODEM standard:
+								// Send ONLY two CAN bytes (do NOT send NAK first).
+								// A preceding NAK causes TeraTerm to queue a retry immediately
+								// before it can process the two CAN bytes, preventing abort.
 								SendByte( CAN );
 								SendByte( CAN );
 								FSL_Close();
