@@ -311,7 +311,8 @@ void Command_2 (void)
 		my_fsl_status = FSL_Erase(uc);
 		while(my_fsl_status == FSL_BUSY)
 		{
-		my_fsl_status = FSL_StatusCheck();
+			R_WDT_Restart();  /* erase takes up to ~20ms per block — feed WDT */
+			my_fsl_status = FSL_StatusCheck();
 		}
 				
 		
