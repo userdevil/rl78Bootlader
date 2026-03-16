@@ -286,10 +286,13 @@ void Command_2 (void)
 		SendString(c2_str4);// "All blocks erase cancelled" );
 		return;
 	}
-	FSL_Open();    	
-	FSL_PrepareFunctions();	
+	R_WDT_Restart();
+	FSL_Open();
+	R_WDT_Restart();
+	FSL_PrepareFunctions();
 	for( uc=Start_Block; uc<=No_Of_Blocks; uc++ )
 	{
+		R_WDT_Restart();
 		SendLFCR();
 		SendString(c2_str5);// "Erasing block " );
 		if(uc < 9){
@@ -317,9 +320,10 @@ void Command_2 (void)
 				
 		
 		if(my_fsl_status == FSL_OK){
+			R_WDT_Restart();
 			SendString(c2_str7);//": Erasing success!!");
-		
-		
+
+
 		}else if(my_fsl_status != FSL_OK){	
 			SendString(c2_str8);// "Erasing of block: " );
 			SendString(c2_str9);// ": FAILED" );
