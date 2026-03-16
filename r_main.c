@@ -116,7 +116,7 @@ void main(void)
 		
 		fsl_descr.fsl_flash_voltage_u08 = 0x00;
 		fsl_descr.fsl_frequency_u08 = 0x20;  /* 32 MHz internal HF oscillator */
-		fsl_descr.fsl_auto_status_check_u08 = 0x01;
+		fsl_descr.fsl_auto_status_check_u08 = 0x00;  /* manual polling: FSL_Write returns FSL_BUSY, we poll FSL_StatusCheck() */
 	
 		bl_fsl_status = FSL_Init((__far fsl_descriptor_t*)&fsl_descr);
 		if(bl_fsl_status != FSL_OK) 

@@ -20,8 +20,9 @@ extern volatile __boolean DelayTimerUnderFlowFlag;
 void Blank_Check_Error(unsigned char );
 void RunCommandHandler (void);
 extern unsigned char XmodemDownloadAndProgramFlash (unsigned long FlashAddress);
+extern fsl_u08 g_xm_last_fsl_status;
 unsigned char first_user_flash_address[]="0002000";
-unsigned char str1[]="RL78/G13 64P 64K Bootloader Main Menu Ver-1";
+unsigned char str1[]="RL78/G13 64P 64K Bootloader Main Menu Ver-2";
 unsigned char str2[]="-------------------------------------------";
 unsigned char str3[]="1......Blank Check User Area";
 unsigned char str4[]="2......Erase User Area";
@@ -69,7 +70,7 @@ unsigned char c4_str9[]="Xmodem Executing...";
 unsigned char c4_str10[]="Xmodem Execution end!!!";
 unsigned char c4_str11[]="Timeout";
 unsigned char c4_str12[]="Download OK";
-unsigned char c4_str13[]="Flash program FAIL";
+unsigned char c4_str13[]="Flash program FAIL FSL=0x";
 unsigned char c4_str14[]="NOT WORKING";
 
 unsigned char c5_str1[]="Run user program (Y/N)?";
@@ -454,7 +455,14 @@ void Command_4 (void)
 			
 	}
 	else if ( Status == XM_PROG_FAIL )
-		SendString(c4_str13);// "Flash program FAIL" );
+	{
+		unsigned char nibble;
+		SendString(c4_str13);  /* "Flash program FAIL FSL=0x" */
+		nibble = (g_xm_last_fsl_status >> 4) & 0x0FU;
+		SendByte((unsigned char)(nibble < 10U ? nibble + '0' : nibble - 10U + 'A'));
+		nibble = g_xm_last_fsl_status & 0x0FU;
+		SendByte((unsigned char)(nibble < 10U ? nibble + '0' : nibble - 10U + 'A'));
+	}
 	else SendString(c4_str14);//"NOT WORKING");
 
 	SendLFCR();
